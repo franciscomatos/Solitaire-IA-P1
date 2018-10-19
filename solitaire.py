@@ -47,7 +47,6 @@ def move_final (move):
     return move[1]
 
 # TAI board
-
 def check_conditions_left_empty(board, pos):
     line = pos_l(pos)
     col = pos_c(pos)
@@ -137,8 +136,7 @@ def check_move_empty(board, pos):
     
     # general case: we check for moves coming from every direction
     # probably will need to check if there are at least 3 col or 3 lines
-    if line not in (0, 1, len(board)-1, len(board)-2) and
-        col not in (0, 1, len(board[line])-1, len(board[line])-2):
+    if line not in (0, 1, len(board)-1, len(board)-2) and col not in (0, 1, len(board[line])-1, len(board[line])-2):
 
         moves.append(check_conditions_left_empty(board, pos))
         moves.append(check_conditions_right_empty(board, pos))
@@ -178,8 +176,7 @@ def check_move_peg(board, pos):
 
     # general case: we check for possible moves in every direction
     # probably will need to check if there are at least 3 col or 3 lines
-    if line not in (0, 1, len(board)-1, len(board)-2) and
-        col not in (0, 1, len(board[line])-1, len(board[line])-2):
+    if line not in (0, 1, len(board)-1, len(board)-2) and col not in (0, 1, len(board[line])-1, len(board[line])-2):
 
         moves.append(check_conditions_left_peg(board, pos))
         moves.append(check_conditions_right_peg(board, pos))
@@ -209,6 +206,8 @@ def check_move_peg(board, pos):
         else:
             moves.append(check_conditions_right_peg(board, pos))
             moves.append(check_conditions_left_peg(board, pos))
+    
+    return removeall(None, moves)
 
 def board_moves(board): 
     merged = list(itertools.chain.from_iterable(board))
@@ -219,7 +218,7 @@ def board_moves(board):
     # checks if it is possible to make a move there
     if is_peg(mostCommonItem):
         for row in range(0, len(board)):
-            for col in range(0, len(row)):
+            for col in range(0, len(board[row])):
                 if is_empty(board[row][col]):
                     pos = make_pos(row, col)
                     for move in check_move_empty(board, pos):
@@ -229,11 +228,13 @@ def board_moves(board):
     # checks if it is possible to make a move from there
     elif is_empty(mostCommonItem):
         for row in range(0, len(board)):
-            for col in range(0, len(row)):
+            for col in range(0, len(board[row])):
                 if is_peg(board[row][col]):
                     pos = make_pos(row, col)
                     for move in check_move_peg(board, pos):
                         movesList.append(move)
+
+    print(movesList)
                     
 def board_perform_move(board, move):
     pass
@@ -243,7 +244,7 @@ class sol_state:
     def __init__(self, board):
         self.board = board
     
-    def __lt__:
+    def __lt__():
         pass
 
 #TAI solitaire
@@ -266,11 +267,16 @@ class solitaire(Problem):
     def h(self, node):
         pass
 
-def main(board):
-    game = solitaire(board)
-    p = InstrumentedProblem(game)
+def main():
+    board_moves([["O","O","O","X"],["O","O","O","O"],["O","_","O","O"],["O","O","O","O"]])
+    board_moves([["O","O","O","X","X"],["O","O","O","O","O"],["O","_","O","_","O"],["O","O","O","O","O"]])
+    board_moves([["O","O","O","X","X","X"],["O","_","O","O","O","O"],["O","O","O","O","O","O"],["O","O","O","O","O","O"]])
+    board_moves([["_","O","O","O","_"], ["O","_","O","_","O"], ["_","O","_","O","_"],["O","_","O","_","_"], ["_","O","_","_","_"]])
+    #game = solitaire(board)
+    #p = InstrumentedProblem(game)
     # falta cenas
 
 if __name__ == "__main__":
-    main(sys.argv[0])
-    sys.exit(0)P' 
+    #main(sys.argv[1])
+    main()
+    sys.exit(0)
