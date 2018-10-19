@@ -261,12 +261,23 @@ def board_perform_move(board, move):
 
 
 #TAI sol_state
+
+def countPieces(board):
+    merged = list(itertools.chain.from_iterable(board))
+    n = 0
+    for symb in merged:
+        if is_peg(sym):
+            n +=1
+    return n
+    
+
 class sol_state:
     def __init__(self, board):
         self.board = board
+        self.numberOfPieces = countPieces(board)
     
-    def __lt__():
-        pass
+    def __lt__(self, other):
+        return self.numberOfPieces < other.numberOfPieces
 
 #TAI solitaire
 class solitaire(Problem):
