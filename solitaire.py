@@ -24,6 +24,7 @@ def is_peg (e):
 def is_blocked (e):
     return e == c_blocked()
 
+
 # TAI pos
 # Tuplo (l, c)
 def make_pos (l, c):
@@ -46,6 +47,7 @@ def move_initial (move):
 
 def move_final (move):
     return move[1]
+
 
 # TAI board
 def check_conditions_left_empty(board, pos):
@@ -257,6 +259,7 @@ def board_perform_move(board, move):
 
     return finalBoard
 
+
 #TAI sol_state
 class sol_state:
     def __init__(self, board):
@@ -286,13 +289,12 @@ class solitaire(Problem):
         pass
 
 def main():
-    board_moves([["O","O","O","X"],["O","O","O","O"],["O","_","O","O"],["O","O","O","O"]])
-    #board_moves([["O","O","O","X","X"],["O","O","O","O","O"],["O","_","O","_","O"],["O","O","O","O","O"]])
-    #board_moves([["O","O","O","X","X","X"],["O","_","O","O","O","O"],["O","O","O","O","O","O"],["O","O","O","O","O","O"]])
-    #board_moves([["_","O","O","O","_"], ["O","_","O","_","O"], ["_","O","_","O","_"],["O","_","O","_","_"], ["_","O","_","_","_"]])
-    #game = solitaire(board)
-    #p = InstrumentedProblem(game)
-    # falta cenas
+    board = [["O","O","O","X"],["O","O","O","O"],["O","_","O","O"],["O","O","O","O"]]
+    print_table(board)
+    moves = board_moves(board)
+    print(moves)
+    newBoard = board_perform_move(board, moves[0])
+    print_table(newBoard)
 
 if __name__ == "__main__":
     #main(sys.argv[1])
