@@ -1,4 +1,5 @@
 import itertools
+import copy
 import search
 import utils
 from search import *
@@ -209,6 +210,14 @@ def check_move_peg(board, pos):
     
     return removeall(None, moves)
 
+
+def calcPos(initial, final):
+    line = (pos_l(initial) + pos_l(final)) // 2
+    col = (pos_c(initial) + pos_c(final)) // 2 
+    middlePos = make_pos(line, col)
+    return middlePos
+
+
 def board_moves(board): 
     merged = list(itertools.chain.from_iterable(board))
     mostCommonItem = mode(merged)
@@ -234,10 +243,19 @@ def board_moves(board):
                     for move in check_move_peg(board, pos):
                         movesList.append(move)
 
-    print(movesList)
+    return movesList
                     
 def board_perform_move(board, move):
-    pass
+    finalBoard = copy.deepcopy(board)
+    initialPos = move_initial(move)
+    finalPos = move_final(move)
+    middlePos = calcPos(initialPos, finalPos)
+
+    finalBoard[pos_l(initialPos)][pos_c(initialPos)] = c_empty()
+    finalBoard[pos_l(middlePos)][pos_c(middlePos)] = c_empty()
+    finalBoard[pos_l(finalPos)][pos_c(finalPos)] = c_peg()
+
+    return finalBoard
 
 #TAI sol_state
 class sol_state:
@@ -269,9 +287,9 @@ class solitaire(Problem):
 
 def main():
     board_moves([["O","O","O","X"],["O","O","O","O"],["O","_","O","O"],["O","O","O","O"]])
-    board_moves([["O","O","O","X","X"],["O","O","O","O","O"],["O","_","O","_","O"],["O","O","O","O","O"]])
-    board_moves([["O","O","O","X","X","X"],["O","_","O","O","O","O"],["O","O","O","O","O","O"],["O","O","O","O","O","O"]])
-    board_moves([["_","O","O","O","_"], ["O","_","O","_","O"], ["_","O","_","O","_"],["O","_","O","_","_"], ["_","O","_","_","_"]])
+    #board_moves([["O","O","O","X","X"],["O","O","O","O","O"],["O","_","O","_","O"],["O","O","O","O","O"]])
+    #board_moves([["O","O","O","X","X","X"],["O","_","O","O","O","O"],["O","O","O","O","O","O"],["O","O","O","O","O","O"]])
+    #board_moves([["_","O","O","O","_"], ["O","_","O","_","O"], ["_","O","_","O","_"],["O","_","O","_","_"], ["_","O","_","_","_"]])
     #game = solitaire(board)
     #p = InstrumentedProblem(game)
     # falta cenas
