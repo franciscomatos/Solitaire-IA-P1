@@ -1,4 +1,5 @@
 import itertools
+import time
 import copy
 import search
 import utils
@@ -54,9 +55,10 @@ def check_conditions_left_empty(board, pos):
     line = pos_l(pos)
     col = pos_c(pos)
 
-    if is_peg(board[line][col-2]) and is_peg(board[line][col-1]):
-        newMove = make_move(make_pos(line, col-2), make_pos(line, col))
-        return newMove
+    if col >= 2:
+        if is_peg(board[line][col-2]) and is_peg(board[line][col-1]):
+            newMove = make_move(make_pos(line, col-2), make_pos(line, col))
+            return newMove
 
     return
 
@@ -64,9 +66,10 @@ def check_conditions_right_empty(board, pos):
     line = pos_l(pos)
     col = pos_c(pos)
 
-    if is_peg(board[line][col+2]) and is_peg(board[line][col+1]):
-        newMove = make_move(make_pos(line, col+2), make_pos(line, col))
-        return newMove
+    if len(board[line]) - col - 1 >= 2:
+        if is_peg(board[line][col+2]) and is_peg(board[line][col+1]):
+            newMove = make_move(make_pos(line, col+2), make_pos(line, col))
+            return newMove
 
     return
 
@@ -74,9 +77,10 @@ def check_conditions_top_empty(board, pos):
     line = pos_l(pos)
     col = pos_c(pos)
 
-    if is_peg(board[line-2][col]) and is_peg(board[line-1][col]):
-        newMove = make_move(make_pos(line-2, col), make_pos(line, col))
-        return newMove
+    if line >= 2:
+        if is_peg(board[line-2][col]) and is_peg(board[line-1][col]):
+            newMove = make_move(make_pos(line-2, col), make_pos(line, col))
+            return newMove
 
     return
 
@@ -84,9 +88,10 @@ def check_conditions_bottom_empty(board, pos):
     line = pos_l(pos)
     col = pos_c(pos)
 
-    if is_peg(board[line+2][col]) and is_peg(board[line+1][col]):
-        newMove = make_move(make_pos(line+2, col), make_pos(line, col))
-        return newMove
+    if len(board) - line - 1 >= 2:
+        if is_peg(board[line+2][col]) and is_peg(board[line+1][col]):
+            newMove = make_move(make_pos(line+2, col), make_pos(line, col))
+            return newMove
 
     return
 
@@ -95,9 +100,10 @@ def check_conditions_left_peg(board, pos):
     line = pos_l(pos)
     col = pos_c(pos)
 
-    if is_empty(board[line][col-2]) and is_peg(board[line][col-1]):
-        newMove = make_move(make_pos(line, col), make_pos(line, col-2))
-        return newMove
+    if col >= 2:
+        if is_empty(board[line][col-2]) and is_peg(board[line][col-1]):
+            newMove = make_move(make_pos(line, col), make_pos(line, col-2))
+            return newMove
 
     return
 
@@ -105,9 +111,10 @@ def check_conditions_right_peg(board, pos):
     line = pos_l(pos)
     col = pos_c(pos)
 
-    if is_empty(board[line][col+2]) and is_peg(board[line][col+1]):
-        newMove = make_move(make_pos(line, col), make_pos(line, col+2))
-        return newMove
+    if len(board[line]) - col - 1 >= 2:
+        if is_empty(board[line][col+2]) and is_peg(board[line][col+1]):
+            newMove = make_move(make_pos(line, col), make_pos(line, col+2))
+            return newMove
 
     return
 
@@ -115,9 +122,10 @@ def check_conditions_top_peg(board, pos):
     line = pos_l(pos)
     col = pos_c(pos)
 
-    if is_empty(board[line-2][col]) and is_peg(board[line-1][col]):
-        newMove = make_move(make_pos(line, col), make_pos(line-2, col))
-        return newMove
+    if line >= 2:
+        if is_empty(board[line-2][col]) and is_peg(board[line-1][col]):
+            newMove = make_move(make_pos(line, col), make_pos(line-2, col))
+            return newMove
 
     return
 
@@ -125,9 +133,10 @@ def check_conditions_bottom_peg(board, pos):
     line = pos_l(pos)
     col = pos_c(pos)
 
-    if is_empty(board[line+2][col]) and is_peg(board[line+1][col]):
-        newMove = make_move(make_pos(line, col), make_pos(line+2, col))
-        return newMove
+    if len(board) - line - 1 >= 2:
+        if is_empty(board[line+2][col]) and is_peg(board[line+1][col]):
+            newMove = make_move(make_pos(line, col), make_pos(line+2, col))
+            return newMove
 
     return
 
@@ -266,48 +275,106 @@ def countPieces(board):
     merged = list(itertools.chain.from_iterable(board))
     n = 0
     for symb in merged:
-        if is_peg(sym):
+        if is_peg(symb):
             n +=1
     return n
     
-
 class sol_state:
     def __init__(self, board):
         self.board = board
         self.numberOfPieces = countPieces(board)
     
     def __lt__(self, other):
-        return self.numberOfPieces < other.numberOfPieces
+        return self.numberOfPieces > other.numberOfPieces
 
 #TAI solitaire
+
+def calcPegCorners(board):
+    n = 0
+    lastLineN = len(board)-1
+
+    if is_peg(board[0][0]):
+        n += 1
+    if is_peg(board[0][len(board[0])-1]):
+        n += 1
+    if is_peg(board[lastLineN][0]):
+        n += 1
+    if is_peg(board[lastLineN][len(board[lastLineN]) - 1]):
+        n += 1
+
+    for line in board:
+        for i in range(1, len(line)-1):
+            if is_blocked(line[i]):
+                if is_peg(line[i-1]): 
+                    n += 1
+                if is_peg(line[i+1]):
+                    n += 1
+
+    return n
+
 class solitaire(Problem):
     def __init__(self, board):
         self.initial = sol_state(board)
+        print(board)
 
     def actions(self, state):
-        pass
+        return board_moves(state.board)
     
     def result(self, state, action):
-        pass
+        newBoard = board_perform_move(state.board, action)
+        newState = sol_state(newBoard)
+        return newState
     
     def path_cost(self, c, s, a, s2):
-        return c+1
+        return s.numberOfPieces 
     
     def goal_test(self, state):
-        pass
+        if state.numberOfPieces == 1:
+            return True
+        else:
+            return False
+
+    def h2(self, node):
+        return node.state.numberOfPieces
 
     def h(self, node):
-        pass
+        corners = calcPegCorners(node.state.board)
+        if node.parent != None:
+            parentCorners = calcPegCorners(node.parent.state.board)
+            return parentCorners + corners #+ node.state.numberOfPieces
+        return corners #+ node.state.numberOfPieces
 
-def main():
-    board = [["O","O","O","X"],["O","O","O","O"],["O","_","O","O"],["O","O","O","O"]]
-    print_table(board)
-    moves = board_moves(board)
-    print(moves)
-    newBoard = board_perform_move(board, moves[0])
-    print_table(newBoard)
+    def h3(self, node):
+        return len(self.actions(node.state))
 
-if __name__ == "__main__":
+
+#def main():
+#    print(sol_state([["_","O","O","O","_"],["O","_","O","O","O"],["_","O","_","O","_"],["O","_","O","_","_"],["_","O","_","_","_"]])>sol_state([["_","O","_","O","_"],["O","_","O","O","O"],["_","O","_","O","_"],["O","_","O","_","_"],["_","O","_","_","_"]]))
+
+#    board = [["O","O","O","X"],["O","O","O","O"],["O","_","O","O"],["O","O","O","O"]]
+##    game = solitaire(board)
+#    p = InstrumentedProblem(game)
+#    result = depth_first_tree_search(p)
+#    solutions = result.solution()
+#    states = result.path()
+#    print(solutions)
+#    for node in states:
+#        print_table(node.state.board)
+#        print( )
+    #print_table(board)
+    #moves = board_moves(board)
+    #print(moves)
+    #newBoard = board_perform_move(board, moves[0])
+    #print_table(newBoard)
+
+#if __name__ == "__main__":
+#    start = time.time()
+#    print(sorted(board_moves([["O","O","0","X","X","X"],["O","_","O","O","O","O"],["0","O","O","X","X","X"]])))
+#    result = greedy_search(solitaire([["O","O","O","X","X"],["O","O","O","O","O"],["O","_","O","_","O"],["O","O","O","O","O"]]))
+#    result = astar_search(solitaire([["O","O","O","X","X"],["O","O","O","O","O"],["O","_","O","_","O"],["O","O","O","O","O"]]))
+#    end = time.time()
+#    print(end-start)
+#    print(calcPegCorners([["O","O","O","X","X","X"],["O","_","O","O","O","O"],["O","O","O","X","X","X"]]))
     #main(sys.argv[1])
-    main()
-    sys.exit(0)
+#    main()
+#    sys.exit(0)
