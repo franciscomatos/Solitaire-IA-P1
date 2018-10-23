@@ -313,6 +313,38 @@ def calcPegCorners(board):
 
     return n
 
+def calcMersonRegions(board):
+    n = 0
+    if len(board) == 4 and len(board[0]) == 5:
+        if is_peg(board[0][2]) and (is_peg(board[0][1]) or  is_peg(board[0][3])):
+            n += 1
+        if is_peg(board[1][0]) and is_peg(board[2][0]):
+            n += 1
+        if is_peg(board[1][2]) and is_peg(board[2][2]) and ( (is_peg(board[1][1]) and is_peg(board[2][1])) or (is_peg(board[1][3]) and is_peg(board[2][3])) ):
+            n += 1
+        if is_peg(board[1][4]) and is_peg(board[2][4]):
+            n += 1
+        if is_peg(board[3][2]) and (is_peg(board[3][1]) or is_peg(board[3][3])):
+            n += 1
+
+    if len(board) == 4 and len(board[0]) == 6:
+        if is_peg(board[0][2]) and is_peg(board[0][1]): 
+            n += 1
+        if is_peg(board[0][3]) and is_peg(board[0][3]):
+            n += 1
+        if is_peg(board[1][0]) and is_peg(board[2][0]):
+            n += 1
+        if is_peg(board[1][2]) and is_peg(board[2][2]) and is_peg(board[1][1]) and is_peg(board[2][1]):
+            n += 1
+        if is_peg(board[1][4]) and is_peg(board[2][4]) and is_peg(board[1][3]) and is_peg(board[2][3]):
+            n += 1
+        if is_peg(board[3][2]) and is_peg(board[3][1]):
+            n += 1
+        if is_peg(board[3][3]) and is_peg(board[3][4]):
+            n += 1
+        
+    return n
+
 class solitaire(Problem):
     def __init__(self, board):
         self.initial = sol_state(board)
@@ -326,7 +358,7 @@ class solitaire(Problem):
         return newState
     
     def path_cost(self, c, s, a, s2):
-        return s.numberOfPieces 
+        return s.numberOfPieces
     
     def goal_test(self, state):
         if state.numberOfPieces == 1:
@@ -339,7 +371,8 @@ class solitaire(Problem):
 
     def h(self, node):
         corners = calcPegCorners(node.state.board)
-        return corners 
+        regions = calcMersonRegions(node.state.board)
+        return corners + regions
 
     def h3(self, node):
         return len(self.actions(node.state))
@@ -365,10 +398,10 @@ class solitaire(Problem):
     #print_table(newBoard)
 
 #if __name__ == "__main__":
-#    start = time.time()
+    start = time.time()
 #    print(sorted(board_moves([["O","O","0","X","X","X"],["O","_","O","O","O","O"],["0","O","O","X","X","X"]])))
-#    result = greedy_search(solitaire([["O","O","O","X","X"],["O","O","O","O","O"],["O","_","O","_","O"],["O","O","O","O","O"]]))
-#    result = astar_search(solitaire([["O","O","O","X","X"],["O","O","O","O","O"],["O","_","O","_","O"],["O","O","O","O","O"]]))
+#  result = greedy_search(solitaire([["O","O","O","X","X"],["O","O","O","O","O"],["O","_","O","_","O"],["O","O","O","O","O"]]))
+#    result = astar_search(solitaire([["O","O","O","X","X","X"],["O","_","O","O","O","O"],["O","O","O","O","O","O"],["O","O","O","O","O","O"]]))
 #    end = time.time()
 #    print(end-start)
 #    print(calcPegCorners([["O","O","O","X","X","X"],["O","_","O","O","O","O"],["O","O","O","X","X","X"]]))
