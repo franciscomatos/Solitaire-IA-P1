@@ -254,6 +254,7 @@ def board_moves(board):
                     for move in check_move_peg(board, pos):
                         movesList.append(move)
 
+    del merged[:]
     return movesList
                     
 def board_perform_move(board, move):
@@ -302,20 +303,19 @@ def calcPegCorners(board):
     if is_peg(board[lastLineN][len(board[lastLineN]) - 1]):
         n += 1
 
-    for line in board:
-        for i in range(1, len(line)-1):
-            if is_blocked(line[i]):
-                if is_peg(line[i-1]): 
-                    n += 1
-                if is_peg(line[i+1]):
-                    n += 1
+    #for line in board:
+    #    for i in range(1, len(line)-1):
+    #        if is_blocked(line[i]):
+    #            if is_peg(line[i-1]): 
+    #                n += 1
+    #            if is_peg(line[i+1]):
+    #                n += 1
 
     return n
 
 class solitaire(Problem):
     def __init__(self, board):
         self.initial = sol_state(board)
-        print(board)
 
     def actions(self, state):
         return board_moves(state.board)
@@ -339,10 +339,7 @@ class solitaire(Problem):
 
     def h(self, node):
         corners = calcPegCorners(node.state.board)
-        if node.parent != None:
-            parentCorners = calcPegCorners(node.parent.state.board)
-            return parentCorners + corners #+ node.state.numberOfPieces
-        return corners #+ node.state.numberOfPieces
+        return corners 
 
     def h3(self, node):
         return len(self.actions(node.state))
