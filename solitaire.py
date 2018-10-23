@@ -279,14 +279,26 @@ def countPieces(board):
         if is_peg(symb):
             n +=1
     return n
+
+def countEmpty(board):
+    merged = list(itertools.chain.from_iterable(board))
+    n = 0
+    for symb in merged:
+        if is_empty(symb):
+            n +=1
+    return n
     
 class sol_state:
     def __init__(self, board):
         self.board = board
         self.numberOfPieces = countPieces(board)
+        self.numberOfEmpty = countEmpty(board)
+        print(board)
+        print('\n')
     
     def __lt__(self, other):
         return self.numberOfPieces > other.numberOfPieces
+    
 
 #TAI solitaire
 
@@ -366,45 +378,8 @@ class solitaire(Problem):
         else:
             return False
 
-    def h2(self, node):
-        return node.state.numberOfPieces
-
     def h(self, node):
         corners = calcPegCorners(node.state.board)
         regions = calcMersonRegions(node.state.board)
         return corners + regions
 
-    def h3(self, node):
-        return len(self.actions(node.state))
-
-
-#def main():
-#    print(sol_state([["_","O","O","O","_"],["O","_","O","O","O"],["_","O","_","O","_"],["O","_","O","_","_"],["_","O","_","_","_"]])>sol_state([["_","O","_","O","_"],["O","_","O","O","O"],["_","O","_","O","_"],["O","_","O","_","_"],["_","O","_","_","_"]]))
-
-#    board = [["O","O","O","X"],["O","O","O","O"],["O","_","O","O"],["O","O","O","O"]]
-##    game = solitaire(board)
-#    p = InstrumentedProblem(game)
-#    result = depth_first_tree_search(p)
-#    solutions = result.solution()
-#    states = result.path()
-#    print(solutions)
-#    for node in states:
-#        print_table(node.state.board)
-#        print( )
-    #print_table(board)
-    #moves = board_moves(board)
-    #print(moves)
-    #newBoard = board_perform_move(board, moves[0])
-    #print_table(newBoard)
-
-#if __name__ == "__main__":
-    start = time.time()
-#    print(sorted(board_moves([["O","O","0","X","X","X"],["O","_","O","O","O","O"],["0","O","O","X","X","X"]])))
-#  result = greedy_search(solitaire([["O","O","O","X","X"],["O","O","O","O","O"],["O","_","O","_","O"],["O","O","O","O","O"]]))
-#    result = astar_search(solitaire([["O","O","O","X","X","X"],["O","_","O","O","O","O"],["O","O","O","O","O","O"],["O","O","O","O","O","O"]]))
-#    end = time.time()
-#    print(end-start)
-#    print(calcPegCorners([["O","O","O","X","X","X"],["O","_","O","O","O","O"],["O","O","O","X","X","X"]]))
-    #main(sys.argv[1])
-#    main()
-#    sys.exit(0)
