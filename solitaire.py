@@ -293,8 +293,6 @@ class sol_state:
         self.board = board
         self.numberOfPieces = countPieces(board)
         self.numberOfEmpty = countEmpty(board)
-        print(board)
-        print('\n')
     
     def __lt__(self, other):
         return self.numberOfPieces > other.numberOfPieces
@@ -327,6 +325,36 @@ def calcPegCorners(board):
 
 def calcMersonRegions(board):
     n = 0
+
+    if len(board) == 4 and len(board[0]) == 4:
+        if is_peg(board[0][2]) and is_peg(board[0][1]): 
+            n += 1
+        if is_peg(board[1][0]) and is_peg(board[2][0]):
+            n += 1
+        if is_peg(board[1][2]) and is_peg(board[2][2]) and is_peg(board[1][1]) and is_peg(board[2][1]):
+            n += 1
+        if is_peg(board[1][3]) and is_peg(board[2][3]):
+            n += 1
+        if is_peg(board[3][1]) and is_peg(board[3][2]):
+            n += 1
+
+    if len(board) == 5 and len(board[0]) == 5:
+        if is_peg(board[0][2]) and (is_peg(board[0][1]) or  is_peg(board[0][3])):
+            n += 1
+        if is_peg(board[2][0]) and (is_peg(board[1][0]) or is_peg(board[3][0])):
+            n += 1
+        if is_peg(board[2][2]):
+            if is_peg(board[1][2]):
+                if (is_peg(board[1][1]) and is_peg(board[2][1])) or (is_peg(board[1][3]) and is_peg(board[2][3])):
+                    n += 1
+            elif is_peg(board[3][2]):
+                if (is_peg(board[2][2]) and is_peg(board[3][2])) or (is_peg(board[2][3]) and is_peg(board[3][3])):
+                    n += 1
+        if is_peg(board[2][4]) and (is_peg(board[1][4]) or is_peg(board[3][4])):
+            n += 1
+        if is_peg(board[4][2]) and (is_peg(board[4][1]) or is_peg(board[4][3])):
+            n += 1
+        
     if len(board) == 4 and len(board[0]) == 5:
         if is_peg(board[0][2]) and (is_peg(board[0][1]) or  is_peg(board[0][3])):
             n += 1
@@ -342,13 +370,15 @@ def calcMersonRegions(board):
     if len(board) == 4 and len(board[0]) == 6:
         if is_peg(board[0][2]) and is_peg(board[0][1]): 
             n += 1
-        if is_peg(board[0][3]) and is_peg(board[0][3]):
+        if is_peg(board[0][3]) and is_peg(board[0][4]):
             n += 1
         if is_peg(board[1][0]) and is_peg(board[2][0]):
             n += 1
         if is_peg(board[1][2]) and is_peg(board[2][2]) and is_peg(board[1][1]) and is_peg(board[2][1]):
             n += 1
         if is_peg(board[1][4]) and is_peg(board[2][4]) and is_peg(board[1][3]) and is_peg(board[2][3]):
+            n += 1
+        if is_peg(board[1][5]) and is_peg(board[2][5]):
             n += 1
         if is_peg(board[3][2]) and is_peg(board[3][1]):
             n += 1
@@ -382,4 +412,3 @@ class solitaire(Problem):
         corners = calcPegCorners(node.state.board)
         regions = calcMersonRegions(node.state.board)
         return corners + regions
-
